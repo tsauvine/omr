@@ -1,0 +1,51 @@
+= Installing =
+
+Copy omr.properties.base to omr.properties and set the mail settings.
+
+Download PDFRenderer.jar, mail.jar and activation.jar to lib folder.
+ https://pdf-renderer.dev.java.net/demos/latest/PDFRenderer.jar
+ http://java.sun.com/products/javamail/downloads/index.html
+ http://java.sun.com/javase/technologies/desktop/javabeans/jaf/downloads/index.html
+
+
+= Compiling =
+ ant build  (this builds the omr.jar)
+
+
+= Running =
+
+ java -jar omr.jar
+
+
+= Instructions =
+
+- Scan the answer sheets. Resolution does not need to be high, 150 dpi is good.
+- Import scanned answer sheets (File | Import sheets...)
+- Set reference sheet in the "Structure properties" in the right. The reference sheet should preferably be an empty sheet.
+- Add question groups and registration markers on the sheet.
+
+- Switch to the Calibrate tab. Sheets are analyzed, which may take a while.
+- In the right you can choose manual global thresholding or automatic per-sheet thresholding. Thresholds can be adjusted in the histogram view by dragging the borders of the areas.
+- Sheets that need manual inspection, are marked in the sheet list with "!". The uncertain bubbles are marked with a red double rectangle and a "?" in the sheet view. The bubble can be manually overridden by clicking it. Click again to toggle between filled, unfilled and auto.
+
+- After thresholds have been set and problematic bubbles overridden, switch to Results tab to see the score. Export the score and answers in the File menu. Project saving is experimental, so it is a good idea to export everything before quitting.
+- Results and the sheet images can be emailed to students (File | Send feedback emails). This feature is experimental and not recommended for production use. The email addresses are formed by adding the prefix and suffix defined in omr.properties file to the student id.
+
+
+= Known issues =
+
+Grading scheme is hard coded: correct answer +1, incorrect answer or multiple selected -0.5, otherwise 0.
+Check letter is hard coded (Helsinki University of Technology style)
+
+PDF support is experimental. It is safer to convert PDFs to JPGSs first:
+ gs -sDEVICE=jpeg -r150x150 -o output%03d.jpg myAnswers.pdf
+
+Some image compression algorithms are not supported by the PDF library. Unfortunately, these algorithms are used by many Xerox scanners.
+
+Emailing does not work if SMTP server requires authentication.
+
+Some properties are not saved in the project file:
+ - manually set thresholds
+ - manually overridden bubbles
+
+Only two registration markers are accepted.

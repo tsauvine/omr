@@ -1,0 +1,12 @@
+smtp-host: smtp.example.com
+
+# The address where feedback mails appear to come from
+from-address: no-reply@example.com
+
+# Subject of the feedback mails
+subject: Feedback from multiple choice exam
+
+# Student's addresses
+# prefix + studentNumber + suffix
+address-prefix:
+address-suffix: @example.com

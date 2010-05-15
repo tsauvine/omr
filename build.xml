@@ -1,0 +1,79 @@
+<project name="omr" default="build" basedir=".">
+  <property name="src.dir" location="src"/>
+  <property name="lib.dir" location="lib"/>
+  <property name="build.dir" location="bin"/>
+  <property name="dist.dir" location="dist"/>
+  <property name="dist.lib.dir" location="dist/lib"/>
+  <property name="main.class.name" value="omr.Omr"/>
+
+  <path id="classpath">
+    <fileset dir="${lib.dir}" includes="*.jar" />
+  </path>
+
+  <target name="init">
+    <tstamp/>
+    <mkdir dir="${build.dir}"/>
+  </target>
+
+  <!-- Compile -->
+  <target name="compile" depends="init" description="compile the source" >
+    <copy todir="${build.dir}">
+      <fileset dir="images" includes="*.png" />
+    </copy>
+    <javac srcdir="${src.dir}" destdir="${build.dir}" target="1.5" source="1.5">
+      <classpath refid="classpath"/>
+    </javac>
+  </target>
+  
+  <!-- Jar -->
+  <target name="build" depends="compile" description="generate the jar" >
+    <manifestclasspath property="manifest.classpath" jarfile="${ant.project.name}.jar">
+      <classpath refid="classpath" />
+    </manifestclasspath>
+
+    <jar destfile="${ant.project.name}.jar" compress="true">
+      <fileset dir="${build.dir}" includes="**/*" />
+      <!--fileset dir="images" includes="*.png" /-->
+      <manifest>
+        <attribute name="Main-Class" value="${main.class.name}" />
+        <attribute name="Class-Path" value="${manifest.classpath}"/>   
+      </manifest>
+    </jar>
+  </target>
+  
+  <!-- Run -->
+  <target name="run" depends="build" description="runs the program" >
+    <!-- java jar="${dist.dir}/${ant.project.name}.jar" fork="true" -->
+    <java jar="${ant.project.name}.jar" fork="true" />
+  </target>
+
+  <!-- Distribution -->
+  <target name="dist" depends="build" description="generate the distribution" >
+    <mkdir dir="${dist.dir}/lib"/>
+    <copy todir="${dist.dir}/lib">
+      <fileset dir="lib" includes="*.jar" />
+    </copy>
+    
+    <path id="dist.classpath">
+      <fileset dir="${dist.lib.dir}" includes="*.jar" />
+    </path>
+    <manifestclasspath property="dist.manifest.classpath" jarfile="${dist.dir}/${ant.project.name}.jar">
+      <classpath refid="dist.classpath" />
+    </manifestclasspath>
+
+    <jar destfile="${dist.dir}/${ant.project.name}.jar" basedir="${build.dir}" compress="true">
+      <fileset dir="${build.dir}" includes="**/*" />
+      <!--fileset dir="images" includes="*.png" /-->
+      <manifest>
+        <attribute name="Main-Class" value="${main.class.name}" />
+        <attribute name="Class-Path" value="${dist.manifest.classpath}"/>   
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="clean" description="clean up" >
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target>
+</project>
+

@@ -1,0 +1,14 @@
+- statistics
+- save overrides
+- do not reset thresholds when manually overridden
+- save manually set thresholds
+- when sheet structure is changed, current sheet in the calibration view is not updated
+- relative sheet image paths
+- treat reference sheet separately
+- default start index: 1. Automatically set index when creating groups.
+- if reference sheet is not selected, show a hint
+- ability to remove sheets
+- UI for grading scheme
+- save choices
+- when question group properties loses focus, update parameters
+- histogram zoom
