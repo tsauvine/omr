@@ -3,11 +3,14 @@ package omr;
 import java.io.IOException;
 import java.util.Observer;
 
-public class CalculateBrightnessTask extends Task {
+/**
+ * A background task that analyzes all Sheets in the project. This includes image registration and calculating average brightnesses of the bubbles. 
+ */
+public class AnalyzeSheetsTask extends Task {
 
     private Project project;
 
-    public CalculateBrightnessTask(Project project, Observer observer) {
+    public AnalyzeSheetsTask(Project project, Observer observer) {
         super(observer);
         
         this.project = project;
