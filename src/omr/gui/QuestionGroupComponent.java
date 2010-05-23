@@ -17,6 +17,9 @@ import javax.swing.undo.CannotUndoException;
 import omr.QuestionGroup;
 import omr.gui.SheetEditor.Tool;
 
+/**
+ * Graphical representation of a QuestionGroup. The component allows user to move and resize the QuestionGroup. 
+ */
 public class QuestionGroupComponent extends SheetViewComponent implements MouseListener, MouseMotionListener {
     
     private static final long serialVersionUID = 1L;
@@ -45,7 +48,7 @@ public class QuestionGroupComponent extends SheetViewComponent implements MouseL
     
     private UndoSupport undoSupport;
     
-    private QuestionGroup group;
+    private QuestionGroup group;     // The model
     private Rectangle[] regions;     // Resize regions
     private int leftMargin;          // Distance between the left edge of the component and the left edge of the first bubble column
     private int topMargin;           // Distance between the top edge of the component and the top edge of the first bubble row
@@ -53,11 +56,15 @@ public class QuestionGroupComponent extends SheetViewComponent implements MouseL
     private int bottomMargin;        // Distance between the bottom edge of the component and the bottom edge of the last bubble row
     //private Font font;
     
-    private int resizeMode;
-    private Point dragStartPoint;
+    private int resizeMode;               // Which edge is being dragged
+    private Point dragStartPoint;         // Mouse down coordinates 
     private Rectangle originalGroupRect;  // Original bounds when resizing
     
-    
+    /**
+     * Constructor.
+     * @param editor SheetEditor where the component is added (it is not added automatically.)
+     * @param group QuestionGroup to be edited
+     */
     public QuestionGroupComponent(SheetEditor editor, QuestionGroup group) {
         super(editor);
 
@@ -97,8 +104,10 @@ public class QuestionGroupComponent extends SheetViewComponent implements MouseL
         if (event.getButton() == MouseEvent.BUTTON1 && (sheetEditor.getCurrentTool() == Tool.SELECT || sheetEditor.getCurrentTool() == Tool.QUESTION)) {
         	// Select
             if (event.isControlDown()) {
+                // Select multiple if control is down
                 sheetEditor.addSelectedComponent(this);
             } else {
+                // Select one otherwise
                 sheetEditor.setSelectedComponent(this);
             }
         
@@ -206,7 +215,7 @@ public class QuestionGroupComponent extends SheetViewComponent implements MouseL
     }
 
     /**
-     * Sets component location and size according to the underlying model and zoomLevel.
+     * Updated component location and size according to the underlying model and zoomLevel.
      */
     @Override
     public void updateBounds() {
@@ -223,7 +232,7 @@ public class QuestionGroupComponent extends SheetViewComponent implements MouseL
     }
     
     /**
-     * Positions resize regions to the edges of the component.
+     * Puts the resize regions to the edges of the component.
      */
     private void updateResizeRegions() {
         double zoomLevel = getZoomLevel();
@@ -297,6 +306,9 @@ public class QuestionGroupComponent extends SheetViewComponent implements MouseL
         }
     }
     
+    /**
+     * Undo object for resize.
+     */
     private class ResizeQuestionGroupEdit extends AbstractUndoableEdit {
         private static final long serialVersionUID = 1L;
         

@@ -2,8 +2,14 @@ package omr.gui;
 
 import java.io.File;
 
+/**
+ * File filter that accepts supported image file formats (tiff, tif, gif, jpeg, jpg, png, pdf).
+ */
 public class ImageFileFilter extends javax.swing.filechooser.FileFilter implements java.io.FileFilter {
 
+    /**
+     * Returns true if the file format is supported.
+     */
     public boolean accept(File file) {
         if (file.isDirectory()) {
             return true;

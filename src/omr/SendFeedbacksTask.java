@@ -1,5 +1,8 @@
 package omr;
 
+/**
+ * A background taks that sends feedback emails. 
+ */
 public class SendFeedbacksTask extends Task {
 
     private Project project;

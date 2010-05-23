@@ -20,11 +20,16 @@ import javax.imageio.ImageIO;
 import omr.QuestionGroup.Orientation;
 
 /**
- * Represents an answer sheet.
+ * Represents an answer sheet. A Sheet object contains bubble brighnesses and answers.
+ * 
+ * Bubble brighnesses are available after the sheet is analyzed by calling the analyze() method.
+ * 
+ * The image file is decoded as soon as any of the get*Buffer() methods are called. The raw sheet
+ * image is cached as long as the sheet has Observers registered with addObserver(). It is thus
+ * important to unregister observers with deleteObserver() when they do not need the sheet any more.
  * 
  * @author Tapio Auvinen
  */
-
 public class Sheet extends Observable {
 	
 	protected String id;         // Unique id of this sheet
@@ -84,18 +89,30 @@ public class Sheet extends Observable {
         this.answersValid = false;
     }
     
+    /**
+     * Sets the unique id of this sheet. This is used in serialization.
+     */
     public void setId(String id) {
     	this.id = id;
     }
     
+    /**
+     * Returns the unique id of this sheet. This is used in serialization.
+     */
     public String getId() {
     	return this.id;
     }
     
+    /**
+     * Sets the student id.
+     */
     public void setStudentId(String studentId) {
         this.studentId = studentId;
     }
     
+    /**
+     * Returns the student id.
+     */
     public String getStudentId() {
         return this.studentId;
     }
@@ -122,18 +139,17 @@ public class Sheet extends Observable {
         return filePath;
     }
 
+    /**
+     * Sets the name of the sheet image file without the path.
+     * @param e.g. AnswerSheet001.jpg
+     */
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-    
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-    
+    /**
+     * Returns the histogram of this sheet. The histogram is empty until the sheet has been analyzed.
+     */
     public Histogram getHistogram() {
         return this.histogram;
     }
@@ -145,12 +161,18 @@ public class Sheet extends Observable {
     public int getPage() {
     	return 0; // Multi-page versions will override this
     }
-    
+
+    /**
+     * Returns a text representation of this sheet. Use for debugging only. For serious purposes, use getStudentId(), getFileName(), etc.
+     */
     @Override
     public String toString() {
     	return this.id;
     }
     
+    /**
+     * Returns information whether the sheet has been analyzed and does it contain uncertain bubbles. See enum SheetStatus.
+     */
     public SheetStatus getStatus() {
     	if (answersValid) {
     		return SheetStatus.ANALYZED;
@@ -162,7 +184,8 @@ public class Sheet extends Observable {
     }
    
     /**
-     * @param degrees Degrees to rotate clockwise
+     * Sets the rotation of this sheet.
+     * @param degrees Degrees to rotate clockwise, will be rounded with 90 interval.
      */
     public void setRotation(int degrees) {
     	// Round to 0, 90, 180, 270
@@ -178,7 +201,7 @@ public class Sheet extends Observable {
     
     /**
      * Returs the rotation of the sheet.
-     * @return 0, 90, 180, 270, how many degrees the sheet is rotated clockwise
+     * @return How many degrees the sheet is rotated clockwise: 0, 90, 180 or 270.
      */
     public int getRotation() {
     	return this.rotation;
@@ -205,16 +228,26 @@ public class Sheet extends Observable {
         }
     }
     
+    /**
+     * Invalidates image registration so that it will be recalculated next time analyze() is called.
+     */
     public void invalidateRegistration() {
     	this.markers = null;
     	invalidateBrightnesses();
     }
     
+    /**
+     * Invalidates bubble brighnesses so that they will be recalculated next time analyze() is called.
+     */
     public void invalidateBrightnesses() {
     	this.brightness = null;
     	invalidateAnswers();
     }
     
+    /**
+     * Invalidates answers so that they will be recalculated next time analyze() is called.
+     * Bubble brightnesses are not invalidated, so the only reason to call this is when the answer key is changed.
+     */
     public void invalidateAnswers() {
     	this.choices = null;
     }
@@ -222,12 +255,16 @@ public class Sheet extends Observable {
     /**
      * Returns an aligned buffer in the original resolution.
      * The aligned buffer is not cached. Instead, it is generated on the fly
-     * from the original buffer which may be cached.  
+     * from the raw buffer which may be cached.  
      */
     public BufferedImage getAlignedBuffer() throws OutOfMemoryError, IOException {
         return this.getAlignedBuffer(this.getUnalignedBuffer());
     }
     
+    /**
+     * Returns an aligned, unzoomed buffer. The result is not cached.
+     * @param unalignedBuffer Raw buffer
+     */
     private BufferedImage getAlignedBuffer(BufferedImage unalignedBuffer) throws OutOfMemoryError, IOException {
         // Transform the unaligned buffer
     	BufferedImage transformedBuffer = new BufferedImage(unalignedBuffer.getWidth(), unalignedBuffer.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -239,9 +276,9 @@ public class Sheet extends Observable {
     }
     
     /**
-     * Returns an aligned buffer zoomed with te given multiplier.
+     * Returns an aligned buffer at the given zoom level.
      * The aligned buffer is not cached. Instead, it is generated on the fly
-     * from the original buffer which may be cached.  
+     * from the raw buffer which may be cached.  
      */
     public BufferedImage getAlignedBuffer(double zoomLevel) throws OutOfMemoryError, IOException {
         BufferedImage tempBuffer = this.getUnalignedBuffer();
@@ -297,12 +334,13 @@ public class Sheet extends Observable {
     	
     	transform.concatenate(AffineTransform.getRotateInstance(Math.toRadians(this.rotation)));
         
-        Graphics2D g = convertedBuffer.createGraphics();
+        // Rotate
+    	Graphics2D g = convertedBuffer.createGraphics();
         g.drawRenderedImage(tempBuffer, transform);
         g.dispose();
             
         // Cache buffer if there are observers
-        if (this.countObservers() > 0) {
+        if (this.countObservers() > 1) {           // 1 beacause SheetsContainer is always observing. FIXME: this isn't robust
             this.rawBuffer = convertedBuffer; 
         }
         
@@ -310,9 +348,9 @@ public class Sheet extends Observable {
     }
     
     /**
-     * Returns the original unaligned buffer zoomed with the given multiplier.
+     * Returns the original unaligned buffer at the given zoom level.
      * The zoomed buffer is not cached. Instead, it is generated on the fly
-     * from the original buffer which may be cached.  
+     * from the raw buffer which may be cached.  
      */
     public BufferedImage getUnalignedBuffer(double zoomLevel) throws OutOfMemoryError, IOException {
         BufferedImage tempBuffer = this.getUnalignedBuffer();
@@ -327,11 +365,12 @@ public class Sheet extends Observable {
     }
     
     /**
-     * Tells whether a bubble is selected or not. If the answer has been overridden by operator, the manually set value is returned instead of the original one.
+     * Tells whether a bubble is selected or not. If the answer has been overridden by the operator, the manually set value is returned instead of the calculated one.
+     * Answers are available after they have been calculated with calculateAnswers().
      * @param group Question group
-     * @param row
-     * @param column
-     * @return negative number if the bubble is clearly blackened, 0 if uncertain, positive if the bubble is clearly white
+     * @param row Local row number [0,n]
+     * @param column Column number [0,n]
+     * @return negative number if the bubble is clearly filled, 0 if uncertain, positive if the bubble is clearly unfilled
      */
     public int getAnswer(QuestionGroup group, int row, int column) {
         if (this.choices == null) {
@@ -357,8 +396,8 @@ public class Sheet extends Observable {
     
     /**
      * Returns the answer override status
-     * @param group
-     * @param row Question number [0,n] in the given group (0 is the first question in the group regardless of index offset)
+     * @param group QuestionGroup from SheetStructure
+     * @param row Local question number [0,n] in the given group (0 is the first question in the group regardless of index offset)
      * @param column Alternative number [0,n]
      * @return negative = force black, 0 = auto, postive = force white
      */
@@ -406,7 +445,8 @@ public class Sheet extends Observable {
     }
     
     /**
-     * Checks if all answers are detected with certainty or manually overridden.
+     * Checks if all answers are either detected with certainty or manually overridden.
+     * Use getStatus() to get the result.
      */
     private void validateAnswers(QuestionGroup group) {
     	if (this.choices == null) {
@@ -444,7 +484,7 @@ public class Sheet extends Observable {
      * Returns the selected alternatives as a string.
      * @param group Question group
      * @param question Number of the question in the group [0,n].
-     * @return example: "AC", null if choices have not been calculated
+     * @return e.g. "AC", null if choices have not been calculated by calling analyze().
      */
     public String getChoices(QuestionGroup group, int question) {
         if (this.choices == null) {
@@ -495,11 +535,12 @@ public class Sheet extends Observable {
     }
     
     /**
-     * 
+     * Returns the average brightness of a bubble. 
+     * Brightnesses are available after the sheet has been analyzed with analyze().   
      * @param group Question group
      * @param row Bubble row number [0,n]
      * @param column Bubble column number [0,n]
-     * @return average value of the pixels contained by the bubble [0...255]. 255 if value has not been calculated. 
+     * @return average value of the pixels contained by the bubble [0...255]. 255 if the sheet has not been analyzed. 
      */
     public int getBubbleBrightness(QuestionGroup group, int row, int column) {
         if (this.brightness == null) {
@@ -516,7 +557,8 @@ public class Sheet extends Observable {
     
     /**
      * Returns the location of a given alignment marker in this sheet.
-     * @param marker Marker who's location is queried
+     * Markers are available after the sheet has been analyzed with analyze().
+     * @param marker Marker form SheetStructure
      * @return Point which contains the coordinates of the marker relative to the upper left corner of this sheet. Null if marker location is not known.
      */
     public Point getRegistrationMarkerLocation(RegistrationMarker marker) {
@@ -529,8 +571,9 @@ public class Sheet extends Observable {
 
     
     /**
-     * Calculates and caches brightness values of the bubbles.
-     * @param structure Sheet structure that contains positions of the bubbles.
+     * Locates registration markers, aligns the sheet, calculates brightness values of the bubbles, and calcualtes answers.
+     * Results are cached. Use invalidate*() to flush cache. 
+     * @param structure Sheet structure that contains positions of the markers and bubbles.
      */
     public void analyze(SheetStructure structure, Histogram globalHistogram) throws OutOfMemoryError, IOException {
         BufferedImage unalignedBuffer = getUnalignedBuffer();
@@ -558,6 +601,7 @@ public class Sheet extends Observable {
 	        this.brightness = new HashMap<QuestionGroup, int[][]>();
 	        
 	        BufferedImage alignedBuffer = getAlignedBuffer(unalignedBuffer);
+	        
 	        unalignedBuffer = null;  // Not needed any more
 	        for (QuestionGroup group : structure.getQuestionGroups()) {
 	            calculateBrightnesses(alignedBuffer, group, globalHistogram);
@@ -569,7 +613,7 @@ public class Sheet extends Observable {
     }
     
     /**
-     * Initializes the transformation matrix for aligning the sheet. Markers should be located before calling this.
+     * Calculates the transformation matrix for aligning the sheet. Markers should be located by analyze() before calling this.
      * @param structure
      */
     private void calculateTransformation(SheetStructure structure) {
@@ -635,6 +679,10 @@ public class Sheet extends Observable {
     	}
     }
     
+    /**
+     * Calculates average bubble brightnesses in the given group.
+     * @param group QuestionGroup from SheetStructure.
+     */
     private void calculateBrightnesses(final BufferedImage buffer, final QuestionGroup group, Histogram globalHistogram) {
     	final int[] array = ((DataBufferInt)buffer.getRaster().getDataBuffer()).getData(); // Image buffer
         
@@ -717,6 +765,10 @@ public class Sheet extends Observable {
         }
     }
     
+    /**
+     * Locates registration markers.
+     * @param marker RegistrationMarker from SheetStructure. 
+     */
     private void locateMarker(final BufferedImage sheetBuffer, final RegistrationMarker marker) {
     	if (sheetBuffer == null) {
 			System.err.println("locateMarker: sheet buffer not available");
@@ -794,6 +846,11 @@ public class Sheet extends Observable {
         this.markers.put(marker, location);
     }
     
+    /**
+     * Updates answers based on bubble brightnesses and the given thresholds.
+     * Does nothing if has no effect if sheet has not been analyzed.
+     * @param group QuestionGroup from SheetStructure
+     */
     public void calculateAnswers(QuestionGroup group, int blackThreshold, int whiteThreshold) {
         // Don't do anything if bubbles have not been analyzed
     	if (this.brightness == null) {
@@ -856,7 +913,7 @@ public class Sheet extends Observable {
     
     /**
      * Creates a JPEG picture with an annotated answer sheet that can be shown to the student.
-     * @return byte array containing a JPEG
+     * @return byte array (blob) containing a JPEG
      */
     public byte[] getFeedbackJpeg(SheetStructure structure) throws IOException {
     	ByteArrayOutputStream out = new ByteArrayOutputStream();

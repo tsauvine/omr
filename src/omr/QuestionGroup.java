@@ -4,7 +4,8 @@ import java.awt.Rectangle;
 import java.util.Observable;
 
 /**
- * Represents a matrix of answer bubbles. 
+ * Represents a matrix of answer bubbles.
+ *  
  * @author Tapio Auvinen
  */
 public class QuestionGroup extends Observable implements Comparable<QuestionGroup> {
@@ -28,14 +29,14 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
     };
     
     public enum QuestionGroupEvent {
-    	POSITION_CHANGED,   // Coordinates, dimensions or orientation is changed. Bubble values must be updated.
+    	POSITION_CHANGED,    // Coordinates, dimensions or orientation is changed. Bubble values must be updated.
     	STRUCTURE_CHANGED,   // Row count, column count or index offset is changed. Sheet structure must be updated.
     	ANSWER_KEY_CHANGED
     }
     
     private int rowCount;      // number of question
     private int columnCount;   // number of alternatives
-    private int indexOffset;         // number of the first question
+    private int indexOffset;   // index of the first question
     
     private Orientation orientation;
     private int leftX;           // x coordinate left-most bubble column's middlepoint
@@ -46,7 +47,7 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
     private int bubbleWidth;
     private int bubbleHeight;
     
-    private boolean[][] answerKey;  // [question][alternative]
+    private boolean[][] answerKey;  // Correct answers [question][alternative], true if the correct answer is to fill the bubble
     
     public QuestionGroup() {
         this(0,0,1,1);
@@ -79,10 +80,16 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
         notifyObservers(QuestionGroupEvent.ANSWER_KEY_CHANGED);
     }
     
+    /** 
+     * Returns the orientation of this question group. See enum Orientation.
+     */
     public Orientation getOrientation() {
         return orientation;
     }
 
+    /** 
+     * Sets the orientation of this question group. See enum Orientation.
+     */
     public void setOrientation(Orientation orientation) {
     	if (this.orientation == orientation) {
     	    return;
@@ -102,6 +109,10 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
         notifyObservers(QuestionGroupEvent.STRUCTURE_CHANGED);
     }
     
+    /** 
+     * Sets the orientation of this question group. See enum Orientation.
+     * @param orientation Text representation of the orientation.
+     */
     public void setOrientation(String orientation) {
     	for (Orientation o : Orientation.values()) {
     		if (orientation.equals(o.toString())) {
@@ -112,14 +123,14 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
     }
 
     /**
-     * Returns the number of the first question. 
+     * Returns the global index of the first question. 
      */
     public int getIndexOffset() {
         return indexOffset;
     }
 
     /**
-     * Sets the number of the first question.
+     * Sets the global index of the first question.
      */
     public void setIndexOffset(int indexOffset) {
         this.indexOffset = indexOffset;
@@ -155,10 +166,16 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
         notifyObservers(QuestionGroupEvent.POSITION_CHANGED);
     }
 
+    /**
+     * Returns the x coordinate of the last column's middlepoint.  
+     */
     public int getRightX() {
         return rightX;
     }
 
+    /**
+     * Sets the x coordinate of the last column's middlepoint.  
+     */
     public void setRightX(int rightX) {
         this.rightX = rightX;
         
@@ -171,10 +188,16 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
         notifyObservers(QuestionGroupEvent.POSITION_CHANGED);
     }
 
+    /**
+     * Returns the y coordinate of the first rows's middlepoint.  
+     */
     public int getTopY() {
         return topY;
     }
 
+    /**
+     * Sets the y coordinate of the first rows's middlepoint.  
+     */
     public void setTopY(int topY) {
         this.topY = topY;
         
@@ -191,10 +214,16 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
         notifyObservers(QuestionGroupEvent.POSITION_CHANGED);
     }
 
+    /**
+     * Returns the y coordinate of the last rows's middlepoint.  
+     */
     public int getBottomY() {
         return bottomY;
     }
 
+    /**
+     * Sets the y coordinate of the last rows's middlepoint.  
+     */
     public void setBottomY(int bottomY) {
         this.bottomY = bottomY;
         
@@ -236,11 +265,16 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
         return bottomY - topY;
     }
 
-    
+    /**
+     * Returns the width of the bubbles.
+     */
     public int getBubbleWidth() {
         return bubbleWidth;
     }
 
+    /**
+     * Sets the width of the bubbles.
+     */
     public void setBubbleWidth(int width) {
         this.bubbleWidth = width;
         
@@ -253,10 +287,16 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
         notifyObservers(QuestionGroupEvent.POSITION_CHANGED);
     }
 
+    /**
+     * Returns the height of the bubbles.
+     */
     public int getBubbleHeight() {
         return bubbleHeight;
     }
 
+    /**
+     * Sets the height of the bubbles.
+     */
     public void setBubbleHeight(int height) {
         this.bubbleHeight = height;
         
@@ -269,7 +309,9 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
         notifyObservers(QuestionGroupEvent.POSITION_CHANGED);
     }
     
-    
+    /**
+     * Sets the number of rows in this group.
+     */
     public void setRowCount(int rowCount) {
         if (this.rowCount == rowCount) {
             return;
@@ -283,6 +325,9 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
         notifyObservers(QuestionGroupEvent.STRUCTURE_CHANGED);
     }
     
+    /**
+     * Sets the number of columns in this group.
+     */
     public void setColumnCount(int columnCount) {
         if (this.columnCount == columnCount) {
             return;
@@ -341,6 +386,10 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
         }
     }
     
+    /**
+     * Returns the text label of the given column. For a vertical group, this is the name of the alternative. 
+     * @param column Column number [0,n]
+     */
     public String getColumnLabel(int column) {
         if (orientation == Orientation.HORIZONTAL) {
         	return Integer.toString(getQuestionNumber(column));
@@ -351,6 +400,10 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
         }
     }
     
+    /**
+     * Returns the text label of the given row. For a vertical group, this is the number of the question. 
+     * @param column Local row number [0,n]
+     */
     public String getRowLabel(int row) {
         if (orientation == Orientation.HORIZONTAL) {
         	return getAlternative(row);
@@ -363,6 +416,10 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
         }
     }
     
+    /**
+     * Returns the name of the alternative, e.g. "A" or "B".
+     * @param alternative Alternative number [0,n]
+     */
     public String getAlternative(int alternative) {
     	if (this.orientation == Orientation.STUDENT_NUMBER) {
     		return Integer.toString(alternative);
@@ -372,7 +429,7 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
     }
     
     /**
-     * Returns the global question number, i.e. local question number + index offset.
+     * Returns the global question index, i.e. local question number + index offset.
      * @param question Local question number (row number)
      */
     public int getQuestionNumber(int question) {
@@ -402,9 +459,9 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
     }
     
     /**
-     * Tells whether the bubble should be selected
+     * Tells whether the correct answer is to select the given bubble
      * @param question Local question number [0, n]
-     * @param alternative Alternative number
+     * @param alternative Alternative number [0, n]
      * @return true if the corect answer is to select this bubble
      */
     public boolean getCorrectAnswer(int question, int alternative) {
@@ -431,6 +488,10 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
         return result.toString();
     }
 
+    /**
+     * Compares this question group to another group based on index offsets.
+     * @return positive number if if this group has a bigger index offset, negative if smaller, 0 if they are equal
+     */
     public int compareTo(QuestionGroup other) {
         return this.indexOffset - other.indexOffset;
     }

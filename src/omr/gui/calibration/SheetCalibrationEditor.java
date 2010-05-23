@@ -19,10 +19,14 @@ import omr.Sheet;
 import omr.SheetStructure;
 import omr.gui.SheetEditor;
 
+/**
+ * Shows the sheet with question groups. Filled, unfilled and uncertain bubbles are rendered differently.
+ * User can override answers by clicking bubbles.
+ */
 public class SheetCalibrationEditor extends SheetEditor implements MouseListener, MouseMotionListener {
     private static final long serialVersionUID = 1L;
     
-    private Project project;      // The Model. Never null.
+    private Project project;      // The model, never null.
     
     //private Tool currentTool;
     
@@ -105,14 +109,14 @@ public class SheetCalibrationEditor extends SheetEditor implements MouseListener
                     	g.setColor(Color.GRAY);
                         
                         // Draw corners
-                        g.drawLine(bubbleLeftX, bubbleTopY, bubbleLeftX + 4, bubbleTopY);
-                        g.drawLine(bubbleLeftX, bubbleBottomY, bubbleLeftX + 4, bubbleBottomY);
-                        g.drawLine(bubbleRightX - 4, bubbleTopY, bubbleRightX, bubbleTopY);
-                        g.drawLine(bubbleRightX - 4, bubbleBottomY, bubbleRightX, bubbleBottomY);
-                        g.drawLine(bubbleLeftX, bubbleTopY, bubbleLeftX, bubbleTopY + 4);
-                        g.drawLine(bubbleRightX, bubbleTopY, bubbleRightX, bubbleTopY + 4);
-                        g.drawLine(bubbleLeftX, bubbleBottomY - 4, bubbleLeftX, bubbleBottomY);
-                        g.drawLine(bubbleRightX, bubbleBottomY - 4, bubbleRightX, bubbleBottomY);
+                        g.drawLine(bubbleLeftX, bubbleTopY, bubbleLeftX + 2, bubbleTopY);
+                        g.drawLine(bubbleLeftX, bubbleBottomY, bubbleLeftX + 2, bubbleBottomY);
+                        g.drawLine(bubbleRightX - 2, bubbleTopY, bubbleRightX, bubbleTopY);
+                        g.drawLine(bubbleRightX - 2, bubbleBottomY, bubbleRightX, bubbleBottomY);
+                        g.drawLine(bubbleLeftX, bubbleTopY, bubbleLeftX, bubbleTopY + 2);
+                        g.drawLine(bubbleRightX, bubbleTopY, bubbleRightX, bubbleTopY + 2);
+                        g.drawLine(bubbleLeftX, bubbleBottomY - 2, bubbleLeftX, bubbleBottomY);
+                        g.drawLine(bubbleRightX, bubbleBottomY - 2, bubbleRightX, bubbleBottomY);
                     } else {
                     	// Uncertain bubble
                         g.setColor(Color.RED);
@@ -122,9 +126,12 @@ public class SheetCalibrationEditor extends SheetEditor implements MouseListener
                         g.drawString("?", bubbleRightX + 5, bubbleBottomY); 
                     }
                     
-                    if (override != 0) {
+                    if (override < 0) {
                     	g.setColor(Color.RED);
-                    	g.drawString("M", bubbleRightX + 2, bubbleBottomY);
+                    	g.drawString("F", bubbleRightX + 2, bubbleBottomY);
+                    } else if (override > 0) {
+                        g.setColor(Color.RED);
+                        g.drawString("U", bubbleRightX + 2, bubbleBottomY);
                     }
                     
                     //g.drawRect(bubbleLeftX, bubbleTopY, bubbleWidth, bubbleHeight);

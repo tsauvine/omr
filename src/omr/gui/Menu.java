@@ -9,6 +9,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+/**
+ * Menu bar of the main window.
+ */
 public class Menu extends JMenuBar implements ActionListener {
     private static final long serialVersionUID = 1L;
     private Gui gui;
@@ -129,6 +132,9 @@ public class Menu extends JMenuBar implements ActionListener {
 
     }
 
+    /**
+     * Menu event listener.
+     */
     public void actionPerformed(ActionEvent event) {
         JMenuItem source = (JMenuItem)(event.getSource());
         

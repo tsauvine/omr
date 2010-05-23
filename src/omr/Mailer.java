@@ -29,6 +29,9 @@ public class Mailer {
 		
 	}
 	
+	/**
+	 * Sends the feedback for one sheet.
+	 */
 	public void sendFeedback(Project project, Sheet sheet) throws Exception {
 	    String studentId = sheet.getStudentId();
 	    if (studentId == null || studentId.length() < 1) {
@@ -75,6 +78,9 @@ public class Mailer {
 		Transport.send(message);
 	}
 	
+	/**
+	 * Generates the feedback text.
+	 */
 	private String generateFeedback(GradingScheme grading, SheetStructure structure, Sheet sheet) {
 	    StringBuilder sb = new StringBuilder();
 	    

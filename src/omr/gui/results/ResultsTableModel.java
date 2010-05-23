@@ -23,7 +23,7 @@ public class ResultsTableModel extends AbstractTableModel {
     
     public int getColumnCount() {
         if (project == null) {
-            return 2;
+            return 3;
         } else {
             // TODO: cache this.
             
@@ -36,14 +36,16 @@ public class ResultsTableModel extends AbstractTableModel {
                 questionsCount += group.getQuestionsCount();
             }
             
-            // Student id, questions, total score
-            return questionsCount + 2;
+            // Filename, Student id, questions, total score
+            return questionsCount + 3;
         }
         
     }
     
     public String getColumnName(int col) {
         if (col == 0) {
+            return "Image";
+        } else if (col == 1) {
             return "Student ID";
         }
         
@@ -51,7 +53,7 @@ public class ResultsTableModel extends AbstractTableModel {
             return "Total points";
         }
         
-        col--;
+        col -= 2;
         for (QuestionGroup group : project.getSheetStructure().getQuestionGroups()) {
             if (group.getOrientation() != Orientation.VERTICAL && group.getOrientation() != Orientation.HORIZONTAL) {
                 continue;
@@ -85,11 +87,13 @@ public class ResultsTableModel extends AbstractTableModel {
         
         // Studentnumber in the left-most column
         if (col == 0) {
+            return sheet.getFileName();
+        } else if (col == 1) {
             return sheet.getStudentId();
         }
 
         // Points
-        col--;
+        col -= 2;
         for (QuestionGroup group : project.getSheetStructure().getQuestionGroups()) {
             if (group.getOrientation() != Orientation.VERTICAL && group.getOrientation() != Orientation.HORIZONTAL) {
                 continue;

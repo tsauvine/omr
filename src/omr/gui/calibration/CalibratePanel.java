@@ -18,7 +18,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import omr.CalculateBrightnessTask;
+import omr.AnalyzeSheetsTask;
 import omr.Project;
 import omr.Sheet;
 import omr.Task;
@@ -144,7 +144,7 @@ public class CalibratePanel extends JPanel implements ListSelectionListener, Cha
         // Switched to this tab?        
         if (this == tabs.getSelectedComponent() && analyzeTask == null) {
             // TODO: don't recalculate sheets or sheet structure have not changed
-            analyzeTask = new CalculateBrightnessTask(project, this);
+            analyzeTask = new AnalyzeSheetsTask(project, this);
 
             // Calculate brightnesses in a background process
             gui.execute(analyzeTask);

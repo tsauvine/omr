@@ -2,6 +2,9 @@ package omr;
 
 import omr.QuestionGroup.Orientation;
 
+/**
+ * Calculates points from answers.
+ */
 public class GradingScheme {
 
     private double correctScore;
@@ -22,11 +25,11 @@ public class GradingScheme {
      */
     public GradingScheme(double correctScore, double incorrectScore, double defaultScore, double multipleSelectedScore, double minScore, double maxScore) {
         this.correctScore = correctScore;
-        this.incorrectScore = incorrectScore ;
-        this.defaultScore = defaultScore ;
-        this.multipleSelectedScore = multipleSelectedScore ;
-        this.minScore = minScore ;
-        this.maxScore = maxScore ;
+        this.incorrectScore = incorrectScore;
+        this.defaultScore = defaultScore;
+        this.multipleSelectedScore = multipleSelectedScore;
+        this.minScore = minScore;
+        this.maxScore = maxScore;
     }
     
     /**
@@ -36,6 +39,9 @@ public class GradingScheme {
         this(1.0, -.5, 0.0, -100.0, -.5, 1);
     }
     
+    /**
+     * Calculates the total score of all question groups in a sheet.
+     */
     public double getScore(Sheet sheet, SheetStructure structure) {
         double score = 0.0;
         
@@ -46,6 +52,10 @@ public class GradingScheme {
         return score;
     }
     
+    /**
+     * Calculates the total score of one question group in a sheet.
+     * @param group QuestionGroup from the SheetStructure 
+     */
     public double getScore(Sheet sheet, QuestionGroup group) {
         double score = 0.0;
         
@@ -92,12 +102,13 @@ public class GradingScheme {
                 incorrectAnswerSelected = true;
             }
             
-            // How many alternatives are selected?
+            // Calculate how many alternatives are selected
             if (selected) {
                 alternativesSelected++;
             }
         }
         
+        // Calculate score
         double score;
         if (alternativesSelected > 1) {
             score = multipleSelectedScore;

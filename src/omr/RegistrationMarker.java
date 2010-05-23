@@ -5,6 +5,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Observable;
 
+/**
+ * Represents a registration marker that is used to align sheets. 
+ */
 public class RegistrationMarker extends Observable {
     public enum RegistrationMarkerEvent {
         MARKER_CHANGED
@@ -14,7 +17,7 @@ public class RegistrationMarker extends Observable {
     private int y;
     private int imageWidth;     // Width of the marker image
     private int imageHeight;    // Height of the marker image
-    private int searchRadius;
+    private int searchRadius;   // Maximum displacement of the marker
     
     private BufferedImage markerBuffer;  // Image of the marker
     
@@ -26,14 +29,23 @@ public class RegistrationMarker extends Observable {
         this.searchRadius = 16;
     }
 
+    /**
+     * Returns the coordinates of this marker.
+     */
     public Point getPoint() {
     	return new Point(x, y);
     }
     
+    /**
+     * Returns the x coordinate of this marker.
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Sets the x coordinate of this marker.
+     */
     public void setX(int x) {
         this.x = x;
         
@@ -42,10 +54,16 @@ public class RegistrationMarker extends Observable {
         notifyObservers();
     }
 
+    /**
+     * Returns the y coordinate of this marker.
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * Sets the y coordinate of this marker.
+     */
     public void setY(int y) {
         this.y = y;
         
@@ -54,10 +72,16 @@ public class RegistrationMarker extends Observable {
         notifyObservers();
     }
 
+    /**
+     * Returns the width of the marker image.
+     */
     public int getImageWidth() {
         return imageWidth;
     }
 
+    /**
+     * Sets the width of the marker image.
+     */
     public void setImageWidth(int imageWidth) {
         this.imageWidth = imageWidth;
         
@@ -70,10 +94,16 @@ public class RegistrationMarker extends Observable {
         notifyObservers();
     }
 
+    /**
+     * Returns the height of the marker image.
+     */
     public int getImageHeight() {
         return imageHeight;
     }
 
+    /**
+     * Sets the height of the marker image.
+     */
     public void setImageHeight(int imageHeight) {
         this.imageHeight = imageHeight;
         
@@ -86,10 +116,16 @@ public class RegistrationMarker extends Observable {
         notifyObservers();
     }
 
+    /**
+     * Returns the search radius, i.e. how far the marker is searched.
+     */
     public int getSearchRadius() {
         return searchRadius;
     }
 
+    /**
+     * Sets the search radius, i.e. how far the marker is searched.
+     */
     public void setSearchRadius(int radius) {
         this.searchRadius = radius;
         
@@ -103,9 +139,8 @@ public class RegistrationMarker extends Observable {
     }
 
     /**
-     * Copies the marker image from the given sheet.
+     * Copies the marker image from the given sheet buffer.
      * @param sheetBuffer unaligned unzoomed buffer image
-     * @return true if marker image was succesfully copied
      */
     public void copyMarkerImage(BufferedImage sheetBuffer) {
         if (sheetBuffer == null) {
@@ -127,6 +162,10 @@ public class RegistrationMarker extends Observable {
         notifyObservers();
     }
     
+    /**
+     * Copies the marker image from the given sheet.
+     * @param sheet Sheet where to copy the marker image from, i.e. the reference sheet.
+     */
     public void copyMarkerImage(Sheet sheet) {
         try {
             this.copyMarkerImage(sheet.getUnalignedBuffer());
@@ -137,6 +176,9 @@ public class RegistrationMarker extends Observable {
         }
     }
     
+    /**
+     * Returns the marker image.
+     */
     public BufferedImage getBuffer() {
     	return this.markerBuffer;
     }

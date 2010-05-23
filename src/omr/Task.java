@@ -21,6 +21,7 @@ abstract public class Task extends Observable implements Runnable {
     }
     
     /**
+     * Constructor
      * @param observer Observer to be notified when task is finished
      */
     public Task(Observer observer) {
@@ -31,6 +32,9 @@ abstract public class Task extends Observable implements Runnable {
         }
     }
     
+    /**
+     * Sets the statusbar for showing progress to the user.
+     */
     public void setStatusBar(StatusBar statusBar) {
         this.statusBar = statusBar;
     }
@@ -41,12 +45,18 @@ abstract public class Task extends Observable implements Runnable {
     }
     */
     
+    /**
+     * Updates the statusbar text.
+     */
     protected void setStatusText(String text) {
         if (statusBar != null) {
             statusBar.setStatusText(text);
         }
     }
     
+    /**
+     * Sets the number of operations needed to complete the task. Progress bar will show completedOperationsCount / estimatedOperationsCount.  
+     */
     protected void setEstimatedOperationsCount(int n) {
         this.estimatedOperationsCount = n;
             
@@ -55,15 +65,24 @@ abstract public class Task extends Observable implements Runnable {
         }
     }
     
+    /**
+     * Returns the total number of operations needed to complete the task. 
+     */
     public int getEstimatedOperationsCount() {
         return estimatedOperationsCount;
     }
     
+    /**
+     * Sets the number of completed operation.
+     */
     protected void setCompletedOperationsCount(int n) {
         this.completedOperationsCount = n;
         this.updateProgressBar();
     }
     
+    /**
+     * Increases the number of completed operations by one.
+     */
     synchronized protected void increaseCompletedOperationsCount() {
         this.completedOperationsCount++;
         this.updateProgressBar();
@@ -77,6 +96,9 @@ abstract public class Task extends Observable implements Runnable {
         statusBar.setProgress(completedOperationsCount);
     }
     
+    /**
+     * Called when the task is finished.
+     */
     protected void finished() {
         if (statusBar != null) {
             statusBar.setStatusText(null);

@@ -1,6 +1,5 @@
 package omr;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.AbstractList;
@@ -12,6 +11,9 @@ import java.util.Observer;
 
 import omr.gui.ImageFileFilter;
 
+/**
+ * Stores answer sheets.
+ */
 public class SheetsContainer extends Observable implements Observer, Iterable<Sheet> {
     private ArrayList<Sheet> sheets;  // TODO: should probably replace this with a more powerful data structure to enable search with id
     private HashMap<String, PdfDocument> pdfDocuments;
@@ -35,18 +37,27 @@ public class SheetsContainer extends Observable implements Observer, Iterable<Sh
         return sheets.size();
     }
     
+    /**
+     * Invalidates image registration in all sheets so that they are recalculated next time analyze() is called.
+     */
     public void invalidateRegistration() {
     	for (Sheet sheet : sheets) {
     		sheet.invalidateRegistration();
     	}
     }
     
+    /**
+     * Invalidates bubble brighnesses in all sheets so that they are recalculated next time analyze() is called.
+     */
     public void invalidateBrightnesses() {
     	for (Sheet sheet : sheets) {
     		sheet.invalidateBrightnesses();
     	}
     }
     
+    /**
+     * Invalidates answers in all sheets so that they are recalculated next time calcualteAnswers() is called.
+     */
     public void invalidateAnswers() {
     	for (Sheet sheet : sheets) {
     		sheet.invalidateAnswers();
@@ -110,6 +121,9 @@ public class SheetsContainer extends Observable implements Observer, Iterable<Sh
         }
     }
     
+    /**
+     * Adds an answer sheet file to the project. If the file contains multiple pages, each page is added as a separate sheet.
+     */
     public void importSheet(String fileName) throws IOException {
         this.importSheet(new File(fileName));
     }
@@ -145,19 +159,28 @@ public class SheetsContainer extends Observable implements Observer, Iterable<Sh
     	
     	return sheet;
     }
-        
-
+    
+    /**
+     * Removes the given sheets from the project.
+     */
     public void removeSheets(Sheet[] sheets) {
         for (Sheet sheet : sheets) {
         	sheet.deleteObserver(this);  // TODO: is this necessary?
         	this.sheets.remove(sheet);
         }
     }
-    
+
+    /**
+     * Returns a list of answer sheets.
+     */
     public AbstractList<Sheet> getSheets() {
         return this.sheets;
     }
     
+    /**
+     * Returns a sheet with the given id.
+     * @return null if sheet is not found
+     */
     public Sheet getSheet(String sheetId) {
     	for (Sheet sheet : this.sheets) {
     		if (sheet.getId().equals(sheetId)) {
@@ -177,6 +200,10 @@ public class SheetsContainer extends Observable implements Observer, Iterable<Sh
 	    }
     }
     
+    /**
+     * Sets the rotation of all sheets.
+     * @param degrees 0, 90, 180 or 270
+     */
     public void setRotation(int degrees) {
     	// FIXME: what if new sheets are added? 
     	

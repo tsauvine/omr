@@ -7,11 +7,10 @@ import omr.gui.Gui;
 
 
 /**
- * Main class of the application.
+ * Main class of the application. Starts the Gui.
+ * 
  * @author Tapio Auvinen
  */
-
-
 public class Omr {
 
     public static void main(String[] args) {

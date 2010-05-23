@@ -1,23 +1,22 @@
-= Installing =
+# Installing #
 
 Copy omr.properties.base to omr.properties and set the mail settings.
 
-Download PDFRenderer.jar, mail.jar and activation.jar to lib folder.
+Download PDFRenderer.jar, mail.jar and activation.jar into the lib folder.
  https://pdf-renderer.dev.java.net/demos/latest/PDFRenderer.jar
  http://java.sun.com/products/javamail/downloads/index.html
  http://java.sun.com/javase/technologies/desktop/javabeans/jaf/downloads/index.html
 
 
-= Compiling =
+# Compiling #
  ant build  (this builds the omr.jar)
 
 
-= Running =
-
+# Running #
  java -jar omr.jar
 
 
-= Instructions =
+# Using #
 
 - Scan the answer sheets. Resolution does not need to be high, 150 dpi is good.
 - Import scanned answer sheets (File | Import sheets...)
@@ -31,16 +30,23 @@ Download PDFRenderer.jar, mail.jar and activation.jar to lib folder.
 - After thresholds have been set and problematic bubbles overridden, switch to Results tab to see the score. Export the score and answers in the File menu. Project saving is experimental, so it is a good idea to export everything before quitting.
 - Results and the sheet images can be emailed to students (File | Send feedback emails). This feature is experimental and not recommended for production use. The email addresses are formed by adding the prefix and suffix defined in omr.properties file to the student id.
 
+# Features #
 
-= Known issues =
+Supported file formats:
+ - tiff, gif, jpeg, png
+ - pdf (some compressed image formats are not supported)
+
+
+# Known issues #
 
 Grading scheme is hard coded: correct answer +1, incorrect answer or multiple selected -0.5, otherwise 0.
 Check letter is hard coded (Helsinki University of Technology style)
 
-PDF support is experimental. It is safer to convert PDFs to JPGSs first:
+PDF support is experimental. It is safer to convert PDFs to JPEG or PNG first:
  gs -sDEVICE=jpeg -r150x150 -o output%03d.jpg myAnswers.pdf
+ gs -sDEVICE=pnggray -r150x150 -o output%03d.png myAnswers.pdf
 
-Some image compression algorithms are not supported by the PDF library. Unfortunately, these algorithms are used by many Xerox scanners.
+The JBIG2 compression algorithm is not supported by the PDF-renderer library. Unfortunately, some Xerox scanners use it for black-and-white images.
 
 Emailing does not work if SMTP server requires authentication.
 

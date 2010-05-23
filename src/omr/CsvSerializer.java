@@ -7,6 +7,9 @@ import java.io.PrintStream;
 
 import omr.QuestionGroup.Orientation;
 
+/**
+ * Saves answers and results as comma separated value (CSV) files. 
+ */
 public class CsvSerializer {
 
     public void saveAnswers(Project project, File file) throws IOException {
@@ -18,13 +21,14 @@ public class CsvSerializer {
             fout = new PrintStream(new FileOutputStream (file));
             
             // Write header line
-            fout.print("studentId");
+            fout.print("image,studentId");
             for (QuestionGroup group : structure.getQuestionGroups()) {
             	// Skip the studentnumber
             	if (group.getOrientation() != Orientation.VERTICAL && group.getOrientation() != Orientation.HORIZONTAL) {
             		continue;
             	}
             	
+            	// Question numbers
                 int questionsCount = group.getQuestionsCount();
                 int indexOffset = group.getIndexOffset();
                 for (int i = 0; i < questionsCount; i++) {
@@ -34,7 +38,13 @@ public class CsvSerializer {
             }
             fout.println();
             
+            // Iterate throuh sheets
             for (Sheet sheet : project.getSheetsContainer()) {
+                // Image filename
+                fout.print(sheet.getFileName());
+                fout.print(",");
+
+                // Studentnumber
                 String studentId = sheet.getStudentId(); 
                 if (studentId == null || studentId.length() < 1) {
                 	fout.print(sheet.getId());
@@ -42,6 +52,7 @@ public class CsvSerializer {
                 	fout.print(studentId);
                 }
                 
+                // Print answers
                 for (QuestionGroup group : structure.getQuestionGroups()) {
                 	// Skip the studentnumber
                 	if (group.getOrientation() != Orientation.VERTICAL && group.getOrientation() != Orientation.HORIZONTAL) {
@@ -60,8 +71,6 @@ public class CsvSerializer {
 
                 fout.println();
             }
-        } catch (IOException e) {
-            
         } finally {
             if (fout != null) {
                 fout.close();
@@ -78,7 +87,7 @@ public class CsvSerializer {
             fout = new PrintStream(new FileOutputStream (file));
             
             // Write header line
-            fout.print("studentId");
+            fout.print("image,studentId");
             for (QuestionGroup group : structure.getQuestionGroups()) {
             	// Skip the studentnumber
             	if (group.getOrientation() != Orientation.VERTICAL && group.getOrientation() != Orientation.HORIZONTAL) {
@@ -96,6 +105,11 @@ public class CsvSerializer {
             fout.println();
             
             for (Sheet sheet : project.getSheetsContainer()) {
+                // Image filename
+                fout.print(sheet.getFileName());
+                fout.print(",");
+                
+                // Student id
                 String studentId = sheet.getStudentId(); 
                 if (studentId == null || studentId.length() < 1) {
                 	fout.print(sheet.getId());
@@ -103,6 +117,7 @@ public class CsvSerializer {
                 	fout.print(studentId);
                 }
                 
+                // Print points
                 for (QuestionGroup group : structure.getQuestionGroups()) {
                 	// Skip the studentnumber
                 	if (group.getOrientation() != Orientation.VERTICAL && group.getOrientation() != Orientation.HORIZONTAL) {
@@ -124,8 +139,6 @@ public class CsvSerializer {
 
                 fout.println();
             }
-        } catch (IOException e) {
-            
         } finally {
             if (fout != null) {
                 fout.close();

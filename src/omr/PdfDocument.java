@@ -20,7 +20,7 @@ import com.sun.pdfview.PDFRenderer;
  * Class PdfDocument represents a multi-page PDF document which may contain
  * answer sheets from multiple students. Multiple PdfSheet objects may use
  * one PdfDocument as their common data source, so that the same Pdf file
- * does not need to be opened and closed unnecessarily.
+ * does not need to be opened and closed repeatedly.
  * 
  * @author Tapio Auvinen
  */
@@ -65,6 +65,9 @@ public class PdfDocument {
 	    return buffer;
 	}
 	
+	/**
+	 * Returns the number of pages in this document.
+	 */
 	public int getPageCount() {
 		return this.pdfFile.getNumPages();
 	}

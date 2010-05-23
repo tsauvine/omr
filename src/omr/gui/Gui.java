@@ -19,7 +19,9 @@ import omr.gui.results.ResultsPanel;
 import omr.gui.structure.StructurePanel;
 
 /**
- * Main window.
+ * Main window of the graphical user interface.
+ * 
+ * Most methods are called from the Menu.
  */
 public class Gui extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -30,11 +32,16 @@ public class Gui extends JFrame {
     private UndoSupport undoSupport;
     private Executor executor;          // Background tasks executor
     
+    // Tabs
     private StructurePanel structurePanel;
     private CalibratePanel calibratePanel;
     private ResultsPanel resultsPanel;
+    
     private StatusBar statusBar;
     
+    /**
+     * Initializes the GUI and shows the main window.
+     */
     public Gui() {
         super("Optical Mark Recognition");
 
@@ -49,7 +56,7 @@ public class Gui extends JFrame {
         //Add widgets
         addWidgets();
         
-        // Initialize project
+        // Initialize a new project
         this.setProject(new Project());
 
         //Display the window
@@ -58,10 +65,13 @@ public class Gui extends JFrame {
     }
     
     private void reset() {
-        // Undo manager
+        // Create undo manager
         this.undoSupport = new UndoSupport();
     }
     
+    /**
+     * Adds widgets to the main window.
+     */
     private void addWidgets() {
         //this.setLayout(new BorderLayout());
 
@@ -92,6 +102,10 @@ public class Gui extends JFrame {
         setJMenuBar(new Menu(this));
     }
     
+    /**
+     * Sets the active project.
+     * @param project Project to be edited. Never set to null.
+     */
     private void setProject(Project project) {
         this.project = project;
         structurePanel.setProject(project);
@@ -113,14 +127,13 @@ public class Gui extends JFrame {
     
     /**
      * Starts a new project. If current project has unsaved changes, user is prompted for confirmation.
-     *
      */
     public void newProject() {
     	if (project.isChanged()) {
-    		// Prompt
+    		// Prompt for confirmation
     		// TODO: offer "Save as" option
             Object[] options = {"Discard", "Cancel"};
-            int n = JOptionPane.showOptionDialog(this,
+            int answer = JOptionPane.showOptionDialog(this,
                     "The project has been modified. Do you want to discard changes?",
                     "Discard changes?",
                     JOptionPane.YES_NO_OPTION,
@@ -129,8 +142,8 @@ public class Gui extends JFrame {
                     options,
                     options[0]);
             
-            if (n != 0) {
-                // Cancel overwrite
+            if (answer != 0) {
+                // Cancel
                 return;
             }
     	}
@@ -141,7 +154,7 @@ public class Gui extends JFrame {
     }
     
     /**
-     * Shows an "Open file" dialog, then opens the selected file as the current project.
+     * Shows an "Open file" dialog, then loads the selected file as the current project.
      */
     public void openProject() {
         JFileChooser chooser = new JFileChooser();
@@ -149,11 +162,13 @@ public class Gui extends JFrame {
         int returnVal = chooser.showOpenDialog(this);
 
         if (returnVal != JFileChooser.APPROVE_OPTION) {
+            // Cancel
             return;
         }
         
         File file = chooser.getSelectedFile();
         
+        // Load project
         try {
             Deserializer deserializer = new Deserializer();
             Project loadedProject = deserializer.loadProject(file);
@@ -182,7 +197,7 @@ public class Gui extends JFrame {
     
     /**
      * Shows a "Save as" dialog, then saves the current project to the chosen file. If the file exists, user is prompted for confirmation.
-     * @return True if file was succesfully saved. False if user cancels or saving fails.
+     * @return True if file was succesfully saved. False if user cancels or an saving fails.
      */
     public boolean saveProjectAs() {
         File file = showSaveAsDialog();
@@ -203,6 +218,7 @@ public class Gui extends JFrame {
 
         int returnVal = chooser.showSaveDialog(this);
         if (returnVal != JFileChooser.APPROVE_OPTION) {
+            // Cancel
             return null;
         }
         
@@ -211,7 +227,7 @@ public class Gui extends JFrame {
         // Prompt overwrite
         if (file.exists()) {
             Object[] options = {"Overwrite", "Cancel"};
-            int n = JOptionPane.showOptionDialog(this,
+            int answer = JOptionPane.showOptionDialog(this,
                     "A file named " + file.getName() + " already exists. Are you sure you want to overwrite it?",
                     "Overwrite file?",
                     JOptionPane.YES_NO_OPTION,
@@ -220,7 +236,7 @@ public class Gui extends JFrame {
                     options,
                     options[0]);
             
-            if (n != 0) {
+            if (answer != 0) {
                 // Cancel overwrite
                 return null;
             }
@@ -251,6 +267,9 @@ public class Gui extends JFrame {
         return true;
     }
     
+    /**
+     * Shows an "open files" dialog for selecting answer sheets to be imported, then imports the selected files.
+     */
     public void importSheets() {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -261,6 +280,7 @@ public class Gui extends JFrame {
         int returnVal = chooser.showOpenDialog(this);
 
         if (returnVal != JFileChooser.APPROVE_OPTION) {
+            // Cancel
             return;
         }
             
@@ -279,9 +299,13 @@ public class Gui extends JFrame {
         }
     }
     
+    /**
+     * Shows a "save as" dialog for exporting answers as CSV, then performs the export.
+     */
     public void exportAnswers() {
         File file = showSaveAsDialog();
         if (file == null) {
+            // Cancel
             return;
         }
         
@@ -298,6 +322,9 @@ public class Gui extends JFrame {
         }
     }
     
+    /**
+     * Shows a "save as" dialog for exporting results as CSV, then performs the export.
+     */
     public void exportResults() {
         File file = showSaveAsDialog();
         if (file == null) {
@@ -318,6 +345,9 @@ public class Gui extends JFrame {
         
     }
     
+    /**
+     * Sends all feedback emails.
+     */
     public void mailFeedback() {
     	SendFeedbacksTask mailerTask = new SendFeedbacksTask(project);
 

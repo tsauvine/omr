@@ -8,13 +8,13 @@ import java.awt.image.BufferedImage;
  * @author Tapio Auvinen
  */
 public class Histogram {
-    private int[] histogram;
-    private BufferedImage[] examples;    // Bubble image of each brightness level 
-    private int minIndex;                // Highest index that has occurrences 
-    private int maxIndex;				 // Lowest index that has occurrences
+    private int[] histogram;             // Number of occurrences at each brightness level
+    private BufferedImage[] examples;    // Bubble image from each brightness level 
+    private int minIndex;                // Lowest index that has occurrences 
+    private int maxIndex;				 // Highest index that has occurrences
     private int maxValue;                // Highest number of occurrences, i.e. the height of the highest peak in the histogram.
     private int mode;                    // Index that has highest number of occurrences, i.e. the index of the highest peak in the histogram.
-    private int sum;                     // total number of occurrences
+    private int sum;                     // Total number of occurrences (== number of bubbles)
     private int blackThreshold;
     private int whiteThreshold;
     
@@ -33,6 +33,28 @@ public class Histogram {
         
         blackThreshold = -1;
         whiteThreshold = 256;
+    }
+
+    /**
+     * Returns the histogram to the empty state.
+     */
+    public void reset() {
+        // Reset histogram
+        for (int i = 0; i < 256; i++) {
+            this.histogram[i] = 0;
+        }
+        
+        if (this.examples != null) {
+            for (int i = 0; i < 256; i++) {
+                this.examples[i] = null;
+            }
+        }
+        
+        this.minIndex = 256;
+        this.maxIndex = 0;
+        this.maxValue = 0;
+        this.mode = 0;
+        this.sum = 0;
     }
     
     /**
@@ -73,6 +95,11 @@ public class Histogram {
         return this.examples;
     }
     
+    /**
+     * Sets an example bubble image.
+     * @param index Brightness
+     * @param image Bubble image
+     */
     public void setExample(int index, BufferedImage image) {
         if (this.examples == null) {
             return;
@@ -81,6 +108,11 @@ public class Histogram {
         this.examples[index] = image;
     }
     
+    /**
+     * Returns an example bubble with the given brightness.
+     * @param index
+     * @return
+     */
     public BufferedImage getExample(int index) {
         if (this.examples == null) {
             return null;
@@ -90,14 +122,14 @@ public class Histogram {
     }
     
     /**
-     * Get the smallest brightness encounterd.
+     * Get the smallest brightness encountered.
      */
     public int getMinIndex() {
         return minIndex;
     }
     
     /**
-     * Get the highest brightness encounterd.
+     * Get the highest brightness encountered.
      */
     public int getMaxIndex() {
         return maxIndex;
@@ -149,29 +181,16 @@ public class Histogram {
     	return average;
     }
     
-    public void reset() {
-        // Reset histogram
-        for (int i = 0; i < 256; i++) {
-            this.histogram[i] = 0;
-        }
-        
-        if (this.examples != null) {
-            for (int i = 0; i < 256; i++) {
-                this.examples[i] = null;
-            }
-        }
-        
-        this.minIndex = 256;
-        this.maxIndex = 0;
-        this.maxValue = 0;
-        this.mode = 0;
-        this.sum = 0;
-    }
-    
+    /**
+     * Returns the highest brightness that is considered filled.   
+     */
     public int getBlackThreshold() {
         return blackThreshold;
     }
 
+    /**
+     * Sets the highest brightness that is considered filled.
+     */
     public void setBlackThreshold(int blackThreshold) {
         this.blackThreshold = blackThreshold;
         
@@ -180,10 +199,16 @@ public class Histogram {
         if (this.blackThreshold > this.whiteThreshold) this.whiteThreshold = this.blackThreshold;
     }
 
+    /**
+     * Returns the lowest brightness that is considered unfilled. 
+     */
     public int getWhiteThreshold() {
         return whiteThreshold;
     }
 
+    /**
+     * Sets the lowest brightness that is considered unfilled.
+     */
     public void setWhiteThreshold(int whiteThreshold) {
         this.whiteThreshold = whiteThreshold;
         
@@ -193,7 +218,10 @@ public class Histogram {
     }
     
     /** 
-     * Automatiacally sets the thresholds to sensible values. 
+     * Automatiacally sets the thresholds to sensible values.
+     * Currently, the blackThreshold is set to the midpoint between mode and the median of the logarithmic histogram,
+     * and whiteThreshold is set to 75% between mode and the median of the logarithmic histogram.
+     * The formula may change in future version. 
      */
     public void guessThreshold() {
         int median = this.getLogMedian();

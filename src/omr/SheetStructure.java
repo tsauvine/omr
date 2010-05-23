@@ -34,6 +34,9 @@ public class SheetStructure extends Observable implements Observer {
         this.registrationMarkers = new ArrayList<RegistrationMarker>();
     }
     
+    /**
+     * Sets the reference sheet over which the bubbles and markers are positioned. Alignment marker images are copied from the reference sheet.
+     */
     public void setReferenceSheet(Sheet sheet) {
         if (sheet == this.referenceSheet) {
         	// Don't do anything if setting to the same value because this is a slow operation.
@@ -61,10 +64,16 @@ public class SheetStructure extends Observable implements Observer {
     	}
     }
     
+    /**
+     * Returns the reference sheet over which the bubbles and markers have been positioned.
+     */
     public Sheet getReferenceSheet() {
     	return this.referenceSheet;
     }
     
+    /**
+     * Adds a question group to the project.
+     */
     public void addQuestionGroup(QuestionGroup group) {
         questionGroups.add(group);
         group.addObserver(this);
@@ -75,6 +84,9 @@ public class SheetStructure extends Observable implements Observer {
         notifyObservers(SheetStructureEvent.STRUCTURE_CHANGED);
     }
     
+    /**
+     * Removes a question group from the project.
+     */
     public void removeQuestionGroup(QuestionGroup group) {
         questionGroups.remove(group);
         group.deleteObserver(this);
@@ -83,13 +95,16 @@ public class SheetStructure extends Observable implements Observer {
         notifyObservers(SheetStructureEvent.STRUCTURE_CHANGED);
     }
     
+    /**
+     * Returns a list of question groups in the sheet structure.
+     */
     public AbstractList<QuestionGroup> getQuestionGroups() {
         return questionGroups;
     }
     
     /**
      * Adds a registration marker to the structure. Only two markers are supported.  
-     * @return true if the marker was succesfully added.
+     * @return true if the marker was succesfully added. False if there is already two markers.
      */
     public boolean addRegistrationMarker(RegistrationMarker marker) {
         // Only take two markers
@@ -107,6 +122,9 @@ public class SheetStructure extends Observable implements Observer {
         }
     }
     
+    /**
+     * Removes a registration marker from the project.
+     */
     public void removeRegistrationMarker(RegistrationMarker marker) {
         registrationMarkers.remove(marker);
         marker.deleteObserver(this);
@@ -116,13 +134,15 @@ public class SheetStructure extends Observable implements Observer {
         notifyObservers(SheetStructureEvent.REGISTRATION_CHANGED);
     }
     
+    /**
+     * Returns a list of registration markers in the sheet structure.
+     */
     public AbstractList<RegistrationMarker> getRegistrationMarkers() {
         return registrationMarkers;
     }
     
     /**
      * Sorts question groups by index offset.
-     *
      */
     private void sortGroups() {
     	Collections.sort(this.questionGroups);
