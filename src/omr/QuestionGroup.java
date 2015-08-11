@@ -11,7 +11,7 @@ import java.util.Observable;
 public class QuestionGroup extends Observable implements Comparable<QuestionGroup> {
     /**
      * Orientation of the question group. 
-     * VERTICAL means that rows represent questions and comlumns represent alternatives.  
+     * VERTICAL means that rows represent questions and columns represent alternatives.  
      * HORIZONTAL means that columns represent questions and rows represent alternatives.
      */
     public enum Orientation {
@@ -58,12 +58,14 @@ public class QuestionGroup extends Observable implements Comparable<QuestionGrou
         this.topY = topY;
         this.rightX = rightX;
         this.bottomY = bottomY;
-        this.bubbleWidth = 10;
-        this.bubbleHeight = 10;
-        this.orientation = Orientation.VERTICAL;
+        this.bubbleWidth = OMRProperties.getInt("bubble-width", 10);
+        this.bubbleHeight = OMRProperties.getInt("bubble-height", 10);
         
-        this.rowCount = 10;
-        this.columnCount = 4;
+        this.orientation = Orientation.VERTICAL;
+       
+        this.rowCount = OMRProperties.getInt("question-rows", 5);
+        
+        this.columnCount = OMRProperties.getInt("question-cols", 4);
         
         initializeAnswerKey();
     }

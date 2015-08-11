@@ -20,7 +20,7 @@
     <copy todir="${build.dir}">
       <fileset dir="images" includes="*.png" />
     </copy>
-    <javac srcdir="${src.dir}" destdir="${build.dir}" target="1.5" source="1.5">
+    <javac srcdir="${src.dir}" destdir="${build.dir}" target="1.8" source="1.8">
       <classpath refid="classpath"/>
     </javac>
   </target>

@@ -32,11 +32,22 @@ public class GradingScheme {
         this.maxScore = maxScore;
     }
     
+    public static final double SCORE_CORRECT = 
+            OMRProperties.getDouble("score-correct", 1.0 );
+    
+    public static final double SCORE_INCORRECT = 
+            OMRProperties.getDouble("score-incorrect", -0.5 );
+    
+    public static final double SCORE_NONE = 
+            OMRProperties.getDouble("score-none", 0.0 );
+    
+    
     /**
      * Default constructor. 1 point for correct answer, -0.5 for incorrect or multiple selected, 0 if nothing is selected 
      */
     public GradingScheme() {
-        this(1.0, -.5, 0.0, -100.0, -.5, 1);
+        this(SCORE_CORRECT , SCORE_INCORRECT, SCORE_NONE, SCORE_INCORRECT, 
+                SCORE_INCORRECT, SCORE_CORRECT);
     }
     
     /**

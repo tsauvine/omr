@@ -275,6 +275,8 @@ public class Gui extends JFrame {
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooser.addChoosableFileFilter(new ImageFileFilter()); 
         chooser.setMultiSelectionEnabled(true);
+        // open current dir 
+        chooser.setCurrentDirectory(new File("."));
         //chooser.setDialogTitle(""); 
 
         int returnVal = chooser.showOpenDialog(this);
