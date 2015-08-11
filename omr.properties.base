@@ -11,8 +11,8 @@ subject: Feedback from multiple choice exam
 address-prefix:
 address-suffix: @example.com
 # This is the grid of the question 
-question-rows: 25
-question-cols: 4
+question-rows:10
+question-cols:4
 # This is bubble width and height 
 bubble-width:10
 bubble-height:10

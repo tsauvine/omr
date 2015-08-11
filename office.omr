@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<omr-project blackThreshold="223" version="0.1" whiteThreshold="223">
+    <structure referenceSheet="omr_final.png">
+        <bubble-group bottomY="998" bubbleHeight="23" bubbleWidth="23"
+            columns="4" indexOffset="1" leftX="96" rightX="180"
+            rows="10" topY="498" type="vertical">
+            <answer-key>1000,0100,0010,0001,0010,0100,1000,0100,0010,0001</answer-key>
+        </bubble-group>
+        <bubble-group bottomY="996" bubbleHeight="23" bubbleWidth="23"
+            columns="4" indexOffset="11" leftX="280" rightX="366"
+            rows="10" topY="496" type="vertical">
+            <answer-key>0000,0000,0000,0000,0000,0000,0000,0000,0000,0000</answer-key>
+        </bubble-group>
+        <bubble-group bottomY="996" bubbleHeight="23" bubbleWidth="23"
+            columns="4" indexOffset="21" leftX="478" rightX="562"
+            rows="10" topY="496" type="vertical">
+            <answer-key>0000,0000,0000,0000,0000,0000,0000,0000,0000,0000</answer-key>
+        </bubble-group>
+        <bubble-group bottomY="994" bubbleHeight="23" bubbleWidth="23"
+            columns="4" indexOffset="31" leftX="646" rightX="732"
+            rows="10" topY="494" type="vertical">
+            <answer-key>0000,0000,0000,0000,0000,0000,0000,0000,0000,0000</answer-key>
+        </bubble-group>
+        <registration-marker height="32" searchRadius="16" width="32"
+            x="28" y="50"/>
+        <registration-marker height="32" searchRadius="16" width="32"
+            x="750" y="1054"/>
+    </structure>
+    <answers>
+        <sheet id="omr_final.png" page="0" rotation="0" src="/Codes/Java/omr/scanned/omr_final.png"/>
+    </answers>
+</omr-project>
