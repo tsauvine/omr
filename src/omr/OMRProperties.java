@@ -14,7 +14,7 @@ import java.util.Properties;
  */
 public final class OMRProperties {
     
-    private static Properties values; 
+    public static Properties values;
     
     static{
      
