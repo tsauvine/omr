@@ -38,7 +38,8 @@ public class Gui extends JFrame {
     private ResultsPanel resultsPanel;
     
     private StatusBar statusBar;
-    
+
+    private File myDir ;
     /**
      * Initializes the GUI and shows the main window.
      */
@@ -62,6 +63,8 @@ public class Gui extends JFrame {
         //Display the window
         //this.pack();
         this.setVisible(true);
+
+        myDir = new File(".");
     }
     
     private void reset() {
@@ -157,7 +160,7 @@ public class Gui extends JFrame {
      * Shows an "Open file" dialog, then loads the selected file as the current project.
      */
     public void openProject() {
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = new JFileChooser(myDir);
         //chooser.addChoosableFileFilter(new OmrFileFilter()); 
         int returnVal = chooser.showOpenDialog(this);
 
@@ -213,7 +216,7 @@ public class Gui extends JFrame {
      * @return Selected file. Null if user cancels.
      */
     private File showSaveAsDialog() {
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = new JFileChooser(myDir);
         //chooser.addChoosableFileFilter(new OmrFileFilter()); 
 
         int returnVal = chooser.showSaveDialog(this);
@@ -271,14 +274,11 @@ public class Gui extends JFrame {
      * Shows an "open files" dialog for selecting answer sheets to be imported, then imports the selected files.
      */
     public void importSheets() {
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = new JFileChooser(myDir);
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooser.addChoosableFileFilter(new ImageFileFilter()); 
         chooser.setMultiSelectionEnabled(true);
-        // open current dir 
-        chooser.setCurrentDirectory(new File("."));
-        //chooser.setDialogTitle(""); 
-
+        //chooser.setDialogTitle("");
         int returnVal = chooser.showOpenDialog(this);
 
         if (returnVal != JFileChooser.APPROVE_OPTION) {
